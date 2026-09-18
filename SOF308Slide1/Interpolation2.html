@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <title>Title</title>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+  </head>
+  <body>
+    <div class="container">
+      <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+
+      <section id="inter2" class="bg-primary p-3 rounded text-center text-light mb-3">
+        <hr>
+        <h1>interpolation:</h1>
+        <h2>{{message}}</h2>
+        <h2>{{number + 5}}</h2>
+        <h2>{{sayHi()}}</h2>
+        <h2 v-html="content"></h2>
+      </section>
+
+      
+      <script>
+        const { createApp } = Vue
+
+        createApp({
+          data() {
+            return {
+                message: "Xin chào VueJS ",
+                number: 20,
+                content: "xin chào các bạn"
+            }
+          },
+          methods:{
+            sayHi(){
+                return 'Đây là một phương thức'
+            }
+        }
+        }).mount('#inter2')
+    </script>
+</body>
+</html>
