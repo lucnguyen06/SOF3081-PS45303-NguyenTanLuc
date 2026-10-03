@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <title>Bài 2 - Trang chủ Index</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <!-- Font Awesome CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="css/style.css">
+    <!-- Bootstrap JS -->
+    <script src="js/bootstrap.bundle.min.js"></script>
+    <style>
+        .navbar-dark .navbar-toggler {
+            border-color: rgba(0, 0, 0, 0.2);
+        }
+        .navbar-dark .navbar-toggler-icon {
+            filter: invert(1);
+        }
+        .jumbotron {
+            background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('images/banner1.jpg') no-repeat center center;
+            color: white;
+            padding: 60px 30px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+        }
+        .card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+        }
+        .video-card img {
+            height: 200px;
+            object-fit: cover;
+        }
+        .alert-custom {
+            background-color: #d1ecf1;
+            border-color: #bee5eb;
+            color: #0c5460;
+        }
+    </style>
+</head>
+<body>
+    <!-- Thanh điều hướng (Navbar) -->
+    <nav class="navbar navbar-expand-sm navbar-dark">
+        <div class="container">
+            <a class="navbar-brand" href="#">
+                <img src="images/logo-energy-pilates.png" alt="Energy Pilates Logo" style="width: 150px;">
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#collapsibleNavbar" aria-controls="collapsibleNavbar" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="collapsibleNavbar">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="#"><i class="fa-solid fa-house"></i> Trang chủ</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#"><i class="fa-solid fa-list"></i> Bài viết</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#"><i class="fa-solid fa-film"></i> Video</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#"><i class="fa-solid fa-circle-info"></i> Giới thiệu</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#"><i class="fa-solid fa-calendar-days"></i> Sự kiện</a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="fa-solid fa-user"></i> Tài khoản
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="#">Đăng nhập</a></li>
+                            <li><a class="dropdown-item" href="#">Quên mật khẩu</a></li>
+                            <li><a class="dropdown-item" href="#">Đăng ký thành viên</a></li>
+                        </ul>
+                    </li>
+                </ul>
+                <ul class="navbar-nav d-flex">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="#">Tiếng Việt</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Tiếng Anh</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Carousel -->
+    <div id="mainCarousel" class="carousel slide" data-bs-ride="carousel">
+        <div class="carousel-indicators">
+            <button type="button" data-bs-target="#mainCarousel" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
+            <button type="button" data-bs-target="#mainCarousel" data-bs-slide-to="1" aria-label="Slide 2"></button>
+            <button type="button" data-bs-target="#mainCarousel" data-bs-slide-to="2" aria-label="Slide 3"></button>
+        </div>
+        <div class="carousel-inner">
+            <div class="carousel-item active">
+                <img src="images/banner1.jpg" class="d-block w-100" alt="Banner 1">
+                <div class="carousel-caption d-none d-md-block">
+                    <h5>Tập Pilates - Sống Khỏe</h5>
+                    <p>Phương pháp tập luyện hiện đại giúp cải thiện sức khỏe toàn diện</p>
+                </div>
+            </div>
+            <div class="carousel-item">
+                <img src="images/banner2.jpg" class="d-block w-100" alt="Banner 2">
+                <div class="carousel-caption d-none d-md-block">
+                    <h5>Chế Độ Dinh Dưỡng</h5>
+                    <p>Ăn uống khoa học để có cuộc sống tràn đầy năng lượng</p>
+                </div>
+            </div>
+            <div class="carousel-item">
+                <img src="images/banner3.jpg" class="d-block w-100" alt="Banner 3">
+                <div class="carousel-caption d-none d-md-block">
+                    <h5>Cẩm Nang Sức Khỏe</h5>
+                    <p>Kiến thức bổ ích cho cuộc sống khỏe mạnh hàng ngày</p>
+                </div>
+            </div>
+        </div>
+        <button class="carousel-control-prev" type="button" data-bs-target="#mainCarousel" data-bs-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Previous</span>
+        </button>
+        <button class="carousel-control-next" type="button" data-bs-target="#mainCarousel" data-bs-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Next</span>
+        </button>
+    </div>
+
+    <!-- Nội dung chính -->
+    <div class="container mt-4">
+        <!-- Jumbotron -->
+        <div class="jumbotron text-center">
+            <h1 class="display-4">Chào mừng đến với Energy Pilates</h1>
+            <p class="lead">Khám phá phương pháp tập luyện Pilates hiện đại, kết hợp với chế độ dinh dưỡng khoa học để mang lại sức khỏe tốt nhất cho bạn.</p>
+            <hr class="my-4 bg-white">
+            <p>Hãy bắt đầu hành trình chăm sóc sức khỏe của bạn ngay hôm nay!</p>
+            <a class="btn btn-light btn-lg" href="#" role="button">Tìm hiểu thêm</a>
+        </div>
+
+        <!-- Alert thông báo -->
+        <div class="alert alert-custom alert-dismissible fade show" role="alert">
+            <strong><i class="fa-solid fa-circle-info"></i> Thông báo:</strong> Chúng tôi có chương trình khuyến mãi đặc biệt cho thành viên mới đăng ký trong tháng này!
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+
+        <!-- Phần bài viết nổi bật -->
+        <h2 class="text-info mb-4 text-center">Bài Viết Nổi Bật</h2>
+        <div class="row mb-4">
+            <div class="col-md-4 mb-3">
+                <div class="card h-100">
+                    <img src="images/tap-pilates1.jpg" class="card-img-top" alt="Tập Pilates">
+                    <div class="card-body">
+                        <h5 class="card-title">Lợi ích của Pilates</h5>
+                        <p class="card-text">Pilates giúp tăng cường sức mạnh cơ bắp, cải thiện độ dẻo dai và thăng bằng cơ thể...</p>
+                        <span class="badge bg-info">Chế độ tập</span>
+                        <span class="badge bg-secondary"><i class="fa-solid fa-comment"></i> 24</span>
+                    </div>
+                    <div class="card-footer">
+                        <small class="text-muted">Cập nhật 2 ngày trước</small>
+                        <a href="#" class="btn btn-sm btn-outline-info float-end">Đọc thêm</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 mb-3">
+                <div class="card h-100">
+                    <img src="images/eat-clean.png" class="card-img-top" alt="Eat Clean">
+                    <div class="card-body">
+                        <h5 class="card-title">Eat Clean là gì?</h5>
+                        <p class="card-text">Chế độ ăn uống lành mạnh, giúp cơ thể khỏe mạnh từ bên trong, giảm cân hiệu quả...</p>
+                        <span class="badge bg-success">Dinh dưỡng</span>
+                        <span class="badge bg-secondary"><i class="fa-solid fa-comment"></i> 18</span>
+                    </div>
+                    <div class="card-footer">
+                        <small class="text-muted">Cập nhật 3 ngày trước</small>
+                        <a href="#" class="btn btn-sm btn-outline-info float-end">Đọc thêm</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 mb-3">
+                <div class="card h-100">
+                    <img src="images/tim-mach.jpg" class="card-img-top" alt="Tim mạch">
+                    <div class="card-body">
+                        <h5 class="card-title">Bảo vệ tim mạch</h5>
+                        <p class="card-text">Những cách đơn giản để bảo vệ tim mạch khỏe mạnh, phòng tránh bệnh tật...</p>
+                        <span class="badge bg-warning text-dark">Sức khỏe</span>
+                        <span class="badge bg-secondary"><i class="fa-solid fa-comment"></i> 32</span>
+                    </div>
+                    <div class="card-footer">
+                        <small class="text-muted">Cập nhật 5 ngày trước</small>
+                        <a href="#" class="btn btn-sm btn-outline-info float-end">Đọc thêm</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Phần Video -->
+        <h2 class="text-info mb-4 text-center">Video Hướng Dẫn</h2>
+        <div class="row mb-4">
+            <div class="col-md-3 mb-3">
+                <div class="card video-card h-100">
+                    <img src="images/video1.jpg" class="card-img-top" alt="Video 1">
+                    <div class="card-body">
+                        <h6 class="card-title">Bài tập Pilates cơ bản</h6>
+                        <p class="card-text small text-muted">15 phút</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 mb-3">
+                <div class="card video-card h-100">
+                    <img src="images/video2.jpg" class="card-img-top" alt="Video 2">
+                    <div class="card-body">
+                        <h6 class="card-title">Yoga cho người mới</h6>
+                        <p class="card-text small text-muted">20 phút</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 mb-3">
+                <div class="card video-card h-100">
+                    <img src="images/video3.jpg" class="card-img-top" alt="Video 3">
+                    <div class="card-body">
+                        <h6 class="card-title">Giảm cân hiệu quả</h6>
+                        <p class="card-text small text-muted">18 phút</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 mb-3">
+                <div class="card video-card h-100">
+                    <img src="images/video4.jpg" class="card-img-top" alt="Video 4">
+                    <div class="card-body">
+                        <h6 class="card-title">Thư giãn cơ thể</h6>
+                        <p class="card-text small text-muted">12 phút</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Pagination -->
+        <nav aria-label="Page navigation">
+            <ul class="pagination justify-content-center">
+                <li class="page-item disabled">
+                    <a class="page-link" href="#" tabindex="-1" aria-disabled="true">Trước</a>
+                </li>
+                <li class="page-item active" aria-current="page">
+                    <a class="page-link" href="#">1</a>
+                </li>
+                <li class="page-item"><a class="page-link" href="#">2</a></li>
+                <li class="page-item"><a class="page-link" href="#">3</a></li>
+                <li class="page-item">
+                    <a class="page-link" href="#">Sau</a>
+                </li>
+            </ul>
+        </nav>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-dark text-white text-center py-3 mt-4">
+        <div class="container">
+            <p class="mb-0">&copy; Copyright by FPT Polytechnic</p>
+        </div>
+    </footer>
+
+    <!-- Tooltip script -->
+    <script>
+        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+        var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl)
+        })
+    </script>
+</body>
+</html>

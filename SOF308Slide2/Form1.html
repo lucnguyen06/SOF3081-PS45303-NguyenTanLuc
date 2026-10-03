@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Bootstrap 5</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- Bootstrap css -->
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap JS-->
+    <script src="js/bootstrap.bundle.min.js"></script>
+  </head>
+  <body>
+    <div class="container">
+      <h3>Form</h3>
+      <form>
+        <div class="mb-3">
+          <label class="form-label">Email address:</label>
+          <input type="email" class="form-control" placeholder="name@example.com">
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Example textarea:</label>
+          <textarea class="form-control" rows="3"></textarea>
+        </div>
+      </form>
+      <br>
+      <h3>Form Controll Size:</h3>
+      <form>
+        <input type="text" class="form-control form-control-lg" placeholder="Large input">
+        <input type="text" class="form-control mt-3" placeholder="Normal input">
+        <input type="text" class="form-control form-control-sm mt-3" placeholder="Small input">
+      </form>
+      <br>
+      <h3>Disabled và Readony</h3>
+      <form>
+        <input type="text" class="form-control mt-3" placeholder="Normal input">
+        <input type="text" class="form-control mt-3" placeholder="Disabled input" disabled>
+        <input type="text" class="form-control mt-3" placeholder="Readony input" readonly>
+      </form>
+      <br>
+      <h3>Plain text input và Color picker</h3>
+      <form></form>
+        <input type="text" class="form-control-plaintext" placeholder="input data here">
+        <input type="color" class="form-control form-control-color" id="myColor"
+          value="#563d7c" title="Choose a color">
+      </form>
+      <br>
+      <h3>File input</h3>
+      <form>
+        <div class="mb-3">
+          <label for="formFile" class="form-label">Default file input example</label>
+          <input class="form-control" type="file" id="formFile">
+        </div>  
+        <div class="mb-3">
+          <label for="formFileMultiple" class="form-label">Multiple files input example</label>
+          <input class="form-control" type="file" id="formFileMultiple" multiple>
+        </div>
+        <div class="mb-3">
+          <label for="formFileDisabled" class="form-label">Disabled file input example</label>
+          <input class="form-control" type="file" id="formFileDisabled" disabled>
+        </div>
+        <div class="mb-3">
+          <label for="formFileSm" class="form-label">Small file input example</label>
+          <input class="form-control form-control-sm" id="formFileSm" type="file">
+        </div>
+        <div>
+          <label for="formFileLg" class="form-label">Large file input example</label>
+          <input class="form-control form-control-lg" id="formFileLg" type="file">
+        </div>
+      </form>
+    </div>
+  </body>
+</html>

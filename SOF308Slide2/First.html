@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Bootstrap 5</title>
+    <meta charset="utf-8">
+    <!--Giúp trình duyệt hiển thị đúng theo chiều rộng thiết bị.-->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- Bootstrap css -->
+    <!-- Bootstrap JS -->
+    
+    <style>
+      h1 {
+        color: blue;
+        font-family: verdana;
+        font-size: 300%;
+
+      }
+      p  {
+        color: rgb(51, 255, 0);
+        font-family: courier;
+        font-size: 160%;
+      }
+      #p01 {
+        color: blue;
+      }
+      .color {
+        color: rgb(255, 0, 0);
+      }
+
+      th {
+          background-color: greenyellow;
+      }
+
+      tr {
+          background-color: #00c3ff;
+      }
+
+      table {
+          border-collapse: collapse;
+          width: 60%;
+      }
+
+      table, th, td {
+          border: 1px solid black;
+      }
+      tr:hover {
+          background-color: yellow;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Đây là thẻ tiêu đề</h1>
+    <p>Đây là một đoạn văn bản.</p>
+
+    <p id="p01">Riêng tôi là khác biệt với màu chữ khác.</p>
+    <p class="color">Đây là màu của văn bản lỗi.</p>
+
+    <table >
+      <thead >
+        <tr class="color">
+          <th>Họ</th>
+          <th>Tên</th>
+          <th>Email</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Lê Văn</td>
+          <td>Tèo</td>
+          <td>teolv@gmail.com</td>
+        </tr>
+        <tr>
+          <td>Nguyễn Thị</td>
+          <td>Tuong Vy</td>
+          <td>vyntt@gmail.com</td>
+        </tr>
+        <tr>
+          <td>Lê Phụng</td>
+          <td>Hieu Kien</td>
+          <td>kienlph@gmail.com</td>
+        </tr>
+       
+      </tbody>
+    </table>
+  </body>
+</html>
