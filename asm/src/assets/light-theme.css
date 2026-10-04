@@ -1,0 +1,313 @@
+/* Light Theme Variables */
+:root {
+  --bg-primary: #F8F9FA;
+  --bg-secondary: #fff;
+  --bg-tertiary: #E9ECEF;
+  
+  --text-primary: #212529;
+  --text-secondary: #6C757D;
+  --text-muted: #ADB5BD;
+  
+  --border-color: #DEE2E6;
+  --border-color-dark: #CED4DA;
+  
+  --primary-color: #0D6EFD;
+  --primary-hover: #0B5ED7;
+  --danger-color: #DC3545;
+  --danger-hover: #BB2D3B;
+  --success-color: #198754;
+  
+  --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
+  --shadow-lg: 0 10px 25px rgba(0, 0, 0, 0.15);
+}
+
+/* Common Styles for Light Theme */
+.home-page,
+.login-page,
+.register-page,
+.create-post-page,
+.post-detail-page,
+.profile-page {
+  background: var(--bg-primary);
+  color: var(--text-primary);
+}
+
+/* Card Styles */
+.auth-card,
+.post-form-card,
+.post-article,
+.comments-section,
+.profile-card,
+.posts-section {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  color: var(--text-primary);
+}
+
+/* Text Colors */
+.auth-title,
+.page-title,
+.post-title,
+.section-title,
+.profile-name {
+  color: var(--text-primary);
+}
+
+.auth-subtitle,
+.page-subtitle,
+.post-excerpt,
+.profile-bio {
+  color: var(--text-secondary);
+}
+
+/* Form Elements */
+.form-control,
+.form-select,
+textarea.form-control {
+  background: var(--bg-secondary);
+  border-color: var(--border-color);
+  color: var(--text-primary);
+}
+
+.form-control:focus,
+.form-select:focus,
+textarea.form-control:focus {
+  background: var(--bg-secondary);
+  border-color: var(--primary-color);
+  color: var(--text-primary);
+  box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+}
+
+.form-control::placeholder,
+textarea.form-control::placeholder {
+  color: var(--text-secondary);
+}
+
+/* Buttons */
+.btn-primary {
+  background: var(--primary-color);
+  border-color: var(--primary-color);
+  color: #fff;
+}
+
+.btn-primary:hover {
+  background: var(--primary-hover);
+  border-color: var(--primary-hover);
+}
+
+.btn-danger {
+  background: var(--danger-color);
+  border-color: var(--danger-color);
+}
+
+.btn-danger:hover {
+  background: var(--danger-hover);
+  border-color: var(--danger-hover);
+}
+
+.btn-secondary {
+  background: #6C757D;
+  border-color: #6C757D;
+  color: #fff;
+}
+
+.btn-secondary:hover {
+  background: #5C636A;
+  border-color: #5C636A;
+}
+
+/* Alerts */
+.alert-danger {
+  background: rgba(220, 53, 69, 0.1);
+  color: var(--danger-color);
+  border: 1px solid rgba(220, 53, 69, 0.3);
+}
+
+.alert-success {
+  background: rgba(25, 135, 84, 0.1);
+  color: var(--success-color);
+  border: 1px solid rgba(25, 135, 84, 0.3);
+}
+
+/* Modal */
+.modal-content {
+  background: var(--bg-secondary);
+  border-color: var(--border-color);
+}
+
+.modal-header {
+  border-bottom-color: var(--border-color);
+}
+
+.modal-footer {
+  border-top-color: var(--border-color);
+}
+
+.modal-title {
+  color: var(--text-primary);
+}
+
+/* Dropdown */
+.dropdown-menu {
+  background: var(--bg-secondary);
+  border-color: var(--border-color);
+  box-shadow: var(--shadow-lg);
+}
+
+.dropdown-item {
+  color: var(--text-primary);
+}
+
+.dropdown-item:hover {
+  background: rgba(13, 110, 253, 0.1);
+  color: var(--primary-color);
+}
+
+.dropdown-divider {
+  border-color: var(--border-color);
+}
+
+/* Comments */
+.comment-item {
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border-color);
+}
+
+.comment-author {
+  color: var(--text-primary);
+}
+
+.comment-content {
+  color: var(--text-secondary);
+}
+
+.comment-date {
+  color: var(--text-muted);
+}
+
+/* Profile */
+.author-avatar,
+.profile-avatar,
+.comment-avatar {
+  border-color: var(--primary-color);
+}
+
+.stat-value {
+  color: var(--primary-color);
+}
+
+.stat-label {
+  color: var(--text-secondary);
+}
+
+/* Post Item */
+.post-item {
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border-color);
+}
+
+.post-item:hover {
+  border-color: var(--primary-color);
+}
+
+.post-item-title {
+  color: var(--text-primary);
+}
+
+.post-item-excerpt {
+  color: var(--text-secondary);
+}
+
+.meta-item {
+  color: var(--text-muted);
+}
+
+.meta-item i {
+  color: var(--primary-color);
+}
+
+/* Login Prompt */
+.login-prompt {
+  background: rgba(13, 110, 253, 0.05);
+  border: 1px dashed var(--primary-color);
+}
+
+.login-prompt i {
+  color: var(--primary-color);
+}
+
+.login-prompt p {
+  color: var(--text-secondary);
+}
+
+.login-prompt a {
+  color: var(--primary-color);
+}
+
+/* Demo Info */
+.demo-info {
+  background: rgba(13, 110, 253, 0.1);
+  border: 1px solid rgba(13, 110, 253, 0.3);
+}
+
+.demo-header {
+  color: var(--primary-color);
+}
+
+.demo-content p {
+  color: var(--text-secondary);
+}
+
+.demo-content strong {
+  color: var(--text-primary);
+}
+
+/* No Comments */
+.no-comments {
+  color: var(--text-secondary);
+}
+
+.no-comments i {
+  color: var(--primary-color);
+}
+
+/* Password Toggle */
+.password-toggle {
+  color: var(--text-secondary);
+}
+
+.password-toggle:hover {
+  color: var(--primary-color);
+}
+
+/* Avatar Edit */
+.avatar-edit-form input {
+  background: var(--bg-secondary);
+  border-color: var(--border-color);
+  color: var(--text-primary);
+}
+
+/* Image Preview */
+.image-preview {
+  border: 1px solid var(--border-color);
+  background: var(--bg-secondary);
+}
+
+/* Content Info */
+.content-info .text-muted {
+  color: var(--text-muted);
+}
+
+/* Not Found */
+.not-found {
+  color: var(--text-primary);
+}
+
+.not-found h2 {
+  color: var(--text-primary);
+}
+
+.not-found p {
+  color: var(--text-secondary);
+}
