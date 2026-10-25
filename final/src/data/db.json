@@ -1,0 +1,33 @@
+{
+  "accounts": [
+    {
+      "id": 1,
+      "username": "admin",
+      "password": "123",
+      "fullName": "Nguyễn Tấn Lực"
+    },
+    {
+      "id": 2,
+      "username": "sinhvien",
+      "password": "123",
+      "fullName": "Sinh Viên FPT"
+    }
+  ],
+  "students": [
+    {
+      "id": 1,
+      "ten": "Tran Quang Anh",
+      "tuoi": 18
+    },
+    {
+      "id": 2,
+      "ten": "Le Thi Lan",
+      "tuoi": 19
+    },
+    {
+      "id": 3,
+      "ten": "Pham Van Bao",
+      "tuoi": 18
+    }
+  ]
+}

@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SOF308 - Final - Nguyễn Tấn Lực (PS45303)</title>
+  <!-- Bootstrap 5 CSS -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+  <style>
+    body {
+      background-color: #ffffff;
+      color: #212529;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    }
+    .top-brand {
+      font-size: 2.2rem;
+      font-weight: 700;
+      color: #212529;
+    }
+    .nav-links-bar {
+      font-size: 1.05rem;
+      font-weight: 500;
+    }
+    .nav-links-bar a {
+      color: #0d6efd;
+      text-decoration: underline;
+    }
+    .nav-separator {
+      color: #6c757d;
+      margin: 0 8px;
+    }
+  </style>
+  <!-- Vue 3 and Vue Router 4 -->
+  <script src="https://cdn.jsdelivr.net/npm/vue@3.5.12/dist/vue.global.prod.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vue-router@4.4.5/dist/vue-router.global.prod.js"></script>
+</head>
+<body>
+  <div id="app" class="container py-4" style="max-width: 900px;">
+    <!-- Tiêu đề SOF308 theo đúng Hình 1 & 2 -->
+    <header class="text-center mb-3">
+      <h1 class="top-brand mb-2">SOF308</h1>
+
+      <!-- Thanh điều hướng liên kết: Home -- QL Sinh vien -->
+      <nav class="nav-links-bar d-flex justify-content-center align-items-center mb-3">
+        <router-link to="/" class="fw-semibold">Home</router-link>
+        <span class="nav-separator">--</span>
+        <router-link to="/quan-ly-sinh-vien" class="fw-semibold">QL Sinh vien</router-link>
+
+        <template v-if="auth.isAuthenticated">
+          <span class="nav-separator">|</span>
+          <span class="badge bg-success-subtle text-success border border-success-subtle me-2">
+            👤 {{ auth.username }}
+          </span>
+          <button class="btn btn-sm btn-outline-secondary py-0 px-2" @click="handleLogout">
+            Đăng xuất
+          </button>
+        </template>
+        <template v-else>
+          <span class="nav-separator">|</span>
+          <router-link to="/login" class="text-secondary small">
+            Đăng nhập
+          </router-link>
+        </template>
+      </nav>
+      <hr class="my-3 opacity-25" />
+    </header>
+
+    <!-- Router View -->
+    <main>
+      <router-view></router-view>
+    </main>
+
+    <!-- Footer thông tin sinh viên -->
+    <footer class="text-center mt-5 pt-3 border-top text-muted small">
+      <p class="mb-1">
+        <strong>SOF308 - Xây dựng giao diện tương tác Backend</strong> | Đề kiểm tra Final
+      </p>
+      <p class="mb-0">
+        Sinh viên: <strong>Nguyễn Tấn Lực</strong> | MSSV: <strong>PS45303</strong>
+      </p>
+    </footer>
+  </div>
+
+  <script>
+    const { createApp, reactive } = Vue;
+    const { createRouter, createWebHashHistory } = VueRouter;
+
+    // Cơ sở dữ liệu JSON mô phỏng (db.json)
+    const DB_STORAGE_KEY = 'final_sof308_db';
+    const initialDb = {
+      accounts: [
+        { id: 1, username: 'admin', password: '123', fullName: 'Nguyễn Tấn Lực' },
+        { id: 2, username: 'sinhvien', password: '123', fullName: 'Sinh Viên FPT' }
+      ],
+      students: [
+        { id: 1, ten: 'Tran Quang Anh', tuoi: 18 },
+        { id: 2, ten: 'Le Thi Lan', tuoi: 19 },
+        { id: 3, ten: 'Pham Van Bao', tuoi: 18 }
+      ]
+    };
+
+    function loadDb() {
+      const saved = localStorage.getItem(DB_STORAGE_KEY);
+      if (saved) {
+        try { return JSON.parse(saved); } catch(e) {}
+      }
+      localStorage.setItem(DB_STORAGE_KEY, JSON.stringify(initialDb));
+      return JSON.parse(JSON.stringify(initialDb));
+    }
+
+    const dbState = reactive(loadDb());
+
+    function saveDb() {
+      localStorage.setItem(DB_STORAGE_KEY, JSON.stringify(dbState));
+    }
+
+    // Trạng thái xác thực
+    const authState = reactive({
+      isAuthenticated: localStorage.getItem('final_isAuthenticated') === 'true',
+      username: localStorage.getItem('final_currentUser') || ''
+    });
+
+    function authLogin(username, password) {
+      const u = username.trim().toLowerCase();
+      const p = password.trim();
+      const acc = dbState.accounts.find(a => a.username.toLowerCase() === u && a.password === p);
+      if (acc) {
+        authState.isAuthenticated = true;
+        authState.username = acc.fullName || acc.username;
+        localStorage.setItem('final_isAuthenticated', 'true');
+        localStorage.setItem('final_currentUser', authState.username);
+        return { success: true };
+      }
+      return { success: false, message: 'Tài khoản hoặc mật khẩu không đúng!' };
+    }
+
+    function authRegister(username, password, fullName) {
+      const u = username.trim().toLowerCase();
+      if (dbState.accounts.some(a => a.username.toLowerCase() === u)) {
+        return { success: false, message: 'Tên tài khoản này đã tồn tại trong db.json!' };
+      }
+      const newAcc = {
+        id: Date.now(),
+        username: username.trim(),
+        password: password.trim(),
+        fullName: fullName ? fullName.trim() : username.trim()
+      };
+      dbState.accounts.push(newAcc);
+      saveDb();
+      return { success: true };
+    }
+
+    function authLogout() {
+      authState.isAuthenticated = false;
+      authState.username = '';
+      localStorage.removeItem('final_isAuthenticated');
+      localStorage.removeItem('final_currentUser');
+    }
+
+    // Component 1: Home.vue
+    const HomeComponent = {
+      name: 'Home',
+      template: `
+        <div class="home-container text-center py-4">
+          <h1 class="display-6 fw-bold mb-3">Home page</h1>
+          <p class="fs-5">
+            <router-link to="/quan-ly-sinh-vien" class="text-primary text-decoration-underline fw-semibold">
+              Go to QL Sinh vien
+            </router-link>
+          </p>
+          <div class="mt-4 p-3 bg-light border rounded-3 d-inline-block text-start" style="max-width: 550px;">
+            <h6 class="fw-bold text-secondary mb-2">📌 Ghi chú kiểm tra (Route Guard):</h6>
+            <ul class="mb-0 small text-muted">
+              <li>Nếu <strong>chưa đăng nhập</strong>, nhấn vào link trên sẽ tự động chuyển hướng đến <code>Login.vue</code>.</li>
+              <li>Sau khi <strong>đăng nhập thành công</strong>, hệ thống sẽ tự động chuyển vào <code>QuanLySinhVien.vue</code>.</li>
+            </ul>
+          </div>
+        </div>
+      `
+    };
+
+    // Component 2: Login.vue
+    const LoginComponent = {
+      name: 'Login',
+      data() {
+        return {
+          username: '',
+          password: '',
+          errorMessage: '',
+          successMessage: '',
+          auth: authState,
+          db: dbState,
+          showRegister: false,
+          newUsername: '',
+          newPassword: '',
+          newFullName: ''
+        };
+      },
+      computed: {
+        redirectTarget() {
+          return this.$route.query.redirect || '/quan-ly-sinh-vien';
+        },
+        redirectReason() {
+          return !!this.$route.query.redirect;
+        }
+      },
+      methods: {
+        handleLogin() {
+          if (!this.username.trim() || !this.password.trim()) {
+            this.errorMessage = 'Vui lòng nhập đầy đủ Username và Password!';
+            return;
+          }
+          this.errorMessage = '';
+          const res = authLogin(this.username, this.password);
+          if (res.success) {
+            this.$router.push(this.redirectTarget);
+          } else {
+            this.errorMessage = res.message;
+          }
+        },
+        handleRegister() {
+          if (!this.newUsername.trim() || !this.newPassword.trim()) {
+            this.errorMessage = 'Vui lòng nhập tên đăng nhập và mật khẩu!';
+            return;
+          }
+          const res = authRegister(this.newUsername, this.newPassword, this.newFullName);
+          if (res.success) {
+            this.successMessage = `Đã tạo tài khoản "${this.newUsername}" và lưu vào JSON!`;
+            this.username = this.newUsername;
+            this.password = this.newPassword;
+            this.newUsername = '';
+            this.newPassword = '';
+            this.newFullName = '';
+            this.showRegister = false;
+            this.errorMessage = '';
+          } else {
+            this.errorMessage = res.message;
+          }
+        },
+        fillAccount(u, p) {
+          this.username = u;
+          this.password = p;
+          this.errorMessage = '';
+        },
+        handleLogout() {
+          authLogout();
+          this.username = '';
+          this.password = '';
+        },
+        goToQL() {
+          this.$router.push('/quan-ly-sinh-vien');
+        }
+      },
+      template: `
+        <div class="login-container d-flex flex-column align-items-center py-3">
+          <div class="card border-0 shadow-sm" style="width: 100%; max-width: 400px;">
+            <div class="card-body p-4">
+              <h2 class="text-center fw-bold mb-4">Login</h2>
+
+              <div v-if="redirectReason" class="alert alert-warning py-2 px-3 small mb-3">
+                <strong>Thông báo:</strong> Vui lòng đăng nhập để truy cập trang Quản lý sinh viên.
+              </div>
+
+              <div v-if="errorMessage" class="alert alert-danger py-2 px-3 small mb-3">
+                {{ errorMessage }}
+              </div>
+
+              <div v-if="successMessage" class="alert alert-success py-2 px-3 small mb-3">
+                {{ successMessage }}
+              </div>
+
+              <div v-if="auth.isAuthenticated" class="alert alert-success text-center py-2 mb-3">
+                <p class="small mb-1">Bạn đã đăng nhập: <strong>{{ auth.username }}</strong></p>
+                <div class="d-flex justify-content-center gap-2 mt-2">
+                  <button class="btn btn-sm btn-primary" @click="goToQL">
+                    Vào QL Sinh viên
+                  </button>
+                  <button class="btn btn-sm btn-outline-danger" @click="handleLogout">
+                    Đăng xuất
+                  </button>
+                </div>
+              </div>
+
+              <form v-else @submit.prevent="handleLogin">
+                <div class="mb-3">
+                  <label class="form-label fw-semibold">Username</label>
+                  <input
+                    type="text"
+                    class="form-control"
+                    v-model="username"
+                    placeholder="Nhap username"
+                  />
+                </div>
+
+                <div class="mb-4">
+                  <label class="form-label fw-semibold">Password</label>
+                  <input
+                    type="password"
+                    class="form-control"
+                    v-model="password"
+                    placeholder="Nhap password"
+                  />
+                </div>
+
+                <div class="d-grid mb-3">
+                  <button type="submit" class="btn btn-success fw-semibold py-2">
+                    Login
+                  </button>
+                </div>
+              </form>
+
+              <div class="border-top pt-3 mt-3">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                  <span class="small text-muted fw-bold">📁 Dữ liệu tài khoản (db.json):</span>
+                  <button 
+                    type="button" 
+                    class="btn btn-link btn-sm p-0 text-decoration-none"
+                    @click="showRegister = !showRegister"
+                  >
+                    {{ showRegister ? 'Đóng' : '+ Thêm tài khoản' }}
+                  </button>
+                </div>
+
+                <div v-if="showRegister" class="p-2 mb-3 bg-light rounded border small">
+                  <div class="mb-2">
+                    <input type="text" class="form-control form-control-sm" v-model="newUsername" placeholder="Tên đăng nhập mới" />
+                  </div>
+                  <div class="mb-2">
+                    <input type="password" class="form-control form-control-sm" v-model="newPassword" placeholder="Mật khẩu" />
+                  </div>
+                  <div class="mb-2">
+                    <input type="text" class="form-control form-control-sm" v-model="newFullName" placeholder="Họ và tên hiển thị" />
+                  </div>
+                  <button type="button" class="btn btn-sm btn-primary w-100" @click="handleRegister">Lưu tài khoản</button>
+                </div>
+
+                <div class="small text-muted">
+                  <div class="fw-semibold mb-1">Tài khoản mẫu:</div>
+                  <div class="d-flex flex-wrap gap-1">
+                    <button
+                      v-for="acc in db.accounts"
+                      :key="acc.id"
+                      type="button"
+                      class="btn btn-sm btn-outline-secondary py-0 px-2"
+                      style="font-size: 0.78rem;"
+                      @click="fillAccount(acc.username, acc.password)"
+                    >
+                      {{ acc.username }} / {{ acc.password }}
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      `
+    };
+
+    // Component 3: QuanLySinhVien.vue
+    const QuanLySinhVienComponent = {
+      name: 'QuanLySinhVien',
+      data() {
+        return {
+          tenSinhVien: '',
+          tuoi: '',
+          errorMessage: '',
+          successMessage: '',
+          db: dbState
+        };
+      },
+      methods: {
+        themSinhVien() {
+          this.errorMessage = '';
+          this.successMessage = '';
+
+          if (!this.tenSinhVien.trim()) {
+            this.errorMessage = 'Vui lòng nhập tên sinh viên!';
+            return;
+          }
+
+          const ageNum = parseInt(this.tuoi, 10);
+          if (!this.tuoi || isNaN(ageNum) || ageNum <= 0) {
+            this.errorMessage = 'Vui lòng nhập tuổi là số nguyên dương hợp lệ!';
+            return;
+          }
+
+          this.db.students.push({
+            id: Date.now(),
+            ten: this.tenSinhVien.trim(),
+            tuoi: ageNum
+          });
+          saveDb();
+
+          this.successMessage = `Đã thêm sinh viên "${this.tenSinhVien.trim()}" thành công!`;
+          this.tenSinhVien = '';
+          this.tuoi = '';
+
+          setTimeout(() => {
+            this.successMessage = '';
+          }, 3000);
+        },
+        xoaSinhVien(index) {
+          const removed = this.db.students.splice(index, 1);
+          saveDb();
+          this.successMessage = `Đã xóa sinh viên "${removed[0].ten}".`;
+          setTimeout(() => {
+            this.successMessage = '';
+          }, 2500);
+        },
+        resetData() {
+          if (confirm('Khôi phục danh sách về mặc định ban đầu?')) {
+            this.db.students = JSON.parse(JSON.stringify(initialDb.students));
+            saveDb();
+          }
+        }
+      },
+      template: `
+        <div class="qlsv-container py-3">
+          <h2 class="text-center fw-bold mb-3">Quan ly Sinh vien</h2>
+
+          <div class="d-flex justify-content-center align-items-center gap-2 mb-4">
+            <span class="badge bg-light text-dark border">📁 Nguồn dữ liệu: JSON</span>
+            <span class="badge bg-success-subtle text-success border border-success-subtle">● Tự động lưu</span>
+            <button type="button" class="btn btn-sm btn-outline-secondary py-0 px-2" style="font-size: 0.8rem;" @click="resetData">↺ Khôi phục gốc</button>
+          </div>
+
+          <div class="row justify-content-center g-4">
+            <!-- Cột Trái: Thêm sinh viên -->
+            <div class="col-md-5 col-lg-4">
+              <div class="card border-0 shadow-sm p-3">
+                <h4 class="fw-bold mb-3 text-primary text-center">Them sinh vien</h4>
+
+                <form @submit.prevent="themSinhVien">
+                  <div class="mb-3">
+                    <label class="form-label fw-semibold">Ten sinh vien</label>
+                    <input
+                      type="text"
+                      class="form-control"
+                      v-model="tenSinhVien"
+                      placeholder="Nhap ten sinh vien"
+                    />
+                  </div>
+
+                  <div class="mb-3">
+                    <label class="form-label fw-semibold">Tuoi</label>
+                    <input
+                      type="number"
+                      class="form-control"
+                      v-model="tuoi"
+                      placeholder="Nhap tuoi"
+                      min="1"
+                      max="120"
+                    />
+                  </div>
+
+                  <div v-if="errorMessage" class="alert alert-danger py-2 px-3 small mb-3">
+                    {{ errorMessage }}
+                  </div>
+
+                  <div v-if="successMessage" class="alert alert-success py-2 px-3 small mb-3">
+                    {{ successMessage }}
+                  </div>
+
+                  <div class="d-grid">
+                    <button type="submit" class="btn btn-warning fw-semibold text-dark py-2">
+                      Them sinh vien
+                    </button>
+                  </div>
+                </form>
+              </div>
+            </div>
+
+            <!-- Cột Phải: Danh sách sinh viên -->
+            <div class="col-md-6 col-lg-5">
+              <div class="card border-0 shadow-sm p-3">
+                <h4 class="fw-bold mb-3 text-danger text-center">Danh sach sinh vien</h4>
+
+                <ul class="list-group list-group-flush">
+                  <li
+                    v-for="(sv, index) in db.students"
+                    :key="sv.id || index"
+                    class="list-group-item d-flex justify-content-between align-items-center py-2 px-2"
+                  >
+                    <span class="fs-6">
+                      {{ sv.ten }} - {{ sv.tuoi }} tuoi
+                    </span>
+                    <button
+                      type="button"
+                      class="btn btn-sm btn-outline-danger border-0"
+                      title="Xóa sinh viên"
+                      @click="xoaSinhVien(index)"
+                    >
+                      ✕
+                    </button>
+                  </li>
+                </ul>
+
+                <div v-if="db.students.length === 0" class="text-center text-muted py-3">
+                  Hiện chưa có sinh viên nào trong danh sách.
+                </div>
+
+                <div class="mt-3 text-end text-muted small">
+                  Tổng số sinh viên: <strong>{{ db.students.length }}</strong>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      `
+    };
+
+    // Định nghĩa router với HashHistory để có thể mở file trực tiếp (file:///)
+    const router = createRouter({
+      history: createWebHashHistory(),
+      routes: [
+        { path: '/', name: 'Home', component: HomeComponent },
+        { path: '/login', name: 'Login', component: LoginComponent },
+        {
+          path: '/quan-ly-sinh-vien',
+          name: 'QuanLySinhVien',
+          component: QuanLySinhVienComponent,
+          meta: { requiresAuth: true }
+        },
+        { path: '/:pathMatch(.*)*', redirect: '/' }
+      ]
+    });
+
+    // Navigation Guard kiểm tra đăng nhập
+    router.beforeEach((to, from, next) => {
+      const requiresAuth = to.matched.some(record => record.meta && record.meta.requiresAuth);
+      if (requiresAuth && !authState.isAuthenticated) {
+        next({ name: 'Login', query: { redirect: to.fullPath } });
+      } else {
+        next();
+      }
+    });
+
+    const app = createApp({
+      data() {
+        return {
+          auth: authState
+        };
+      },
+      methods: {
+        handleLogout() {
+          authLogout();
+          alert('Đã đăng xuất thành công!');
+          if (this.$route.meta.requiresAuth) {
+            this.$router.push('/login');
+          }
+        }
+      }
+    });
+
+    app.use(router);
+    app.mount('#app');
+  </script>
+</body>
+</html>
