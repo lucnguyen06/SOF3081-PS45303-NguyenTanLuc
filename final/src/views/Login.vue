@@ -58,87 +58,19 @@
           </div>
 
           <!-- Nút bấm Login màu xanh lá theo Hình 2 -->
-          <div class="d-grid mb-3">
+          <div class="d-grid">
             <button type="submit" class="btn btn-success fw-semibold py-2">
               Login
             </button>
           </div>
         </form>
-
-        <!-- Phần quản lý tài khoản JSON (db.json) -->
-        <div class="border-top pt-3 mt-3">
-          <div class="d-flex justify-content-between align-items-center mb-2">
-            <span class="small text-muted fw-bold">📁 Dữ liệu tài khoản (db.json):</span>
-            <button 
-              type="button" 
-              class="btn btn-link btn-sm p-0 text-decoration-none"
-              @click="showRegister = !showRegister"
-            >
-              {{ showRegister ? 'Đóng form' : '+ Thêm tài khoản mới' }}
-            </button>
-          </div>
-
-          <!-- Form tạo tài khoản mới lưu vào db.json -->
-          <div v-if="showRegister" class="p-2 mb-3 bg-light rounded border small">
-            <h6 class="fw-bold mb-2">Tạo tài khoản mới (Lưu vào db.json):</h6>
-            <div class="mb-2">
-              <input 
-                type="text" 
-                class="form-control form-control-sm" 
-                v-model="newUsername" 
-                placeholder="Tên đăng nhập mới"
-              />
-            </div>
-            <div class="mb-2">
-              <input 
-                type="password" 
-                class="form-control form-control-sm" 
-                v-model="newPassword" 
-                placeholder="Mật khẩu"
-              />
-            </div>
-            <div class="mb-2">
-              <input 
-                type="text" 
-                class="form-control form-control-sm" 
-                v-model="newFullName" 
-                placeholder="Họ và tên hiển thị"
-              />
-            </div>
-            <button 
-              type="button" 
-              class="btn btn-sm btn-primary w-100" 
-              @click="handleRegister"
-            >
-              Lưu tài khoản vào db.json
-            </button>
-          </div>
-
-          <!-- Danh sách tài khoản mẫu có sẵn trong JSON -->
-          <div class="small text-muted">
-            <div class="fw-semibold mb-1">Tài khoản mẫu trong db.json:</div>
-            <div class="d-flex flex-wrap gap-1">
-              <button
-                v-for="acc in db.accounts"
-                :key="acc.id"
-                type="button"
-                class="btn btn-sm btn-outline-secondary py-0 px-2"
-                style="font-size: 0.78rem;"
-                @click="fillAccount(acc.username, acc.password)"
-              >
-                {{ acc.username }} / {{ acc.password }}
-              </button>
-            </div>
-          </div>
-        </div>
       </div>
     </div>
   </div>
 </template>
 
 <script>
-import { authState, login, logout, register } from '../utils/auth';
-import { dbState } from '../utils/dbService';
+import { authState, login, logout } from '../utils/auth';
 
 export default {
   name: 'Login',
@@ -148,12 +80,7 @@ export default {
       password: '',
       errorMessage: '',
       successMessage: '',
-      auth: authState,
-      db: dbState,
-      showRegister: false,
-      newUsername: '',
-      newPassword: '',
-      newFullName: ''
+      auth: authState
     };
   },
   computed: {
@@ -175,43 +102,13 @@ export default {
         return;
       }
 
-      // Xác thực dựa trên danh sách accounts trong db.json
+      // Xác thực đăng nhập
       const result = login(this.username, this.password);
       if (result.success) {
         this.$router.push(this.redirectTarget);
       } else {
         this.errorMessage = result.message;
       }
-    },
-    async handleRegister() {
-      if (!this.newUsername.trim() || !this.newPassword.trim()) {
-        this.errorMessage = 'Vui lòng nhập tên đăng nhập và mật khẩu!';
-        return;
-      }
-
-      const res = await register({
-        username: this.newUsername,
-        password: this.newPassword,
-        fullName: this.newFullName
-      });
-
-      if (res.success) {
-        this.successMessage = `Đã tạo tài khoản "${this.newUsername}" và lưu vào db.json!`;
-        this.username = this.newUsername;
-        this.password = this.newPassword;
-        this.newUsername = '';
-        this.newPassword = '';
-        this.newFullName = '';
-        this.showRegister = false;
-        this.errorMessage = '';
-      } else {
-        this.errorMessage = res.message;
-      }
-    },
-    fillAccount(u, p) {
-      this.username = u;
-      this.password = p;
-      this.errorMessage = '';
     },
     handleLogout() {
       logout();

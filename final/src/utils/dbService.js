@@ -96,6 +96,20 @@ export async function addStudent(student) {
   return newStudent;
 }
 
+// Cập nhật thông tin sinh viên
+export async function updateStudent(index, student) {
+  if (index >= 0 && index < dbState.students.length) {
+    dbState.students[index] = {
+      ...dbState.students[index],
+      ten: student.ten.trim(),
+      tuoi: parseInt(student.tuoi, 10)
+    };
+    await persistDatabase();
+    return dbState.students[index];
+  }
+  return null;
+}
+
 // Xóa sinh viên theo index hoặc id
 export async function deleteStudent(indexOrId) {
   if (typeof indexOrId === 'number' && indexOrId < dbState.students.length) {

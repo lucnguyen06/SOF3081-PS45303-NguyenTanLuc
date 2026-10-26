@@ -1,37 +1,17 @@
 <template>
   <div class="qlsv-container py-3">
     <!-- Tiêu đề Quản lý Sinh viên theo đúng Hình 3 -->
-    <h2 class="text-center fw-bold mb-3">Quan ly Sinh vien</h2>
-
-    <!-- Trạng thái kết nối lưu dữ liệu JSON -->
-    <div class="d-flex justify-content-center align-items-center gap-2 mb-4">
-      <span class="badge bg-light text-dark border">
-        📁 Nguồn dữ liệu: <code>src/data/db.json</code>
-      </span>
-      <span v-if="db.isServerSync" class="badge bg-success-subtle text-success border border-success-subtle">
-        ● Tự động lưu vào file JSON (Vite API)
-      </span>
-      <span v-else class="badge bg-secondary-subtle text-secondary border">
-        ● Lưu trữ cục bộ (localStorage)
-      </span>
-      <button 
-        type="button" 
-        class="btn btn-sm btn-outline-secondary py-0 px-2"
-        style="font-size: 0.8rem;"
-        title="Khôi phục 3 sinh viên mẫu theo đề bài"
-        @click="handleReset"
-      >
-        ↺ Khôi phục gốc
-      </button>
-    </div>
+    <h2 class="text-center fw-bold mb-4">Quan ly Sinh vien</h2>
 
     <div class="row justify-content-center g-4">
-      <!-- Cột Trái: Thêm sinh viên -->
+      <!-- Cột Trái: Thêm / Sửa sinh viên -->
       <div class="col-md-5 col-lg-4">
         <div class="card border-0 shadow-sm p-3">
-          <h4 class="fw-bold mb-3 text-primary text-center">Them sinh vien</h4>
+          <h4 class="fw-bold mb-3 text-primary text-center">
+            {{ editingIndex !== -1 ? 'Sửa sinh viên' : 'Them sinh vien' }}
+          </h4>
 
-          <form @submit.prevent="themSinhVien">
+          <form @submit.prevent="xuLyLuu">
             <!-- Tên sinh viên -->
             <div class="mb-3">
               <label class="form-label fw-semibold">Ten sinh vien</label>
@@ -61,15 +41,23 @@
               {{ errorMessage }}
             </div>
 
-            <!-- Thông báo thêm thành công -->
+            <!-- Thông báo thành công -->
             <div v-if="successMessage" class="alert alert-success py-2 px-3 small mb-3">
               {{ successMessage }}
             </div>
 
-            <!-- Nút Thêm sinh viên -->
-            <div class="d-grid">
+            <!-- Nút Thêm / Cập nhật sinh viên -->
+            <div v-if="editingIndex === -1" class="d-grid">
               <button type="submit" class="btn btn-warning fw-semibold text-dark py-2">
                 Them sinh vien
+              </button>
+            </div>
+            <div v-else class="d-flex gap-2">
+              <button type="submit" class="btn btn-primary fw-semibold py-2 flex-grow-1">
+                Cập nhật sinh viên
+              </button>
+              <button type="button" class="btn btn-secondary fw-semibold py-2" @click="huySua">
+                Hủy
               </button>
             </div>
           </form>
@@ -87,19 +75,30 @@
               v-for="(sv, index) in db.students"
               :key="sv.id || index"
               class="list-group-item d-flex justify-content-between align-items-center py-2 px-2"
+              :class="{ 'bg-warning-subtle': editingIndex === index }"
             >
               <span class="fs-6">
                 {{ sv.ten }} - {{ sv.tuoi }} tuoi
               </span>
-              <!-- Nút xóa sinh viên tiện ích -->
-              <button
-                type="button"
-                class="btn btn-sm btn-outline-danger border-0"
-                title="Xóa sinh viên (Cập nhật vào db.json)"
-                @click="xoaSinhVien(index)"
-              >
-                ✕
-              </button>
+              <!-- Các nút Sửa và Xóa sinh viên -->
+              <div class="d-flex gap-1">
+                <button
+                  type="button"
+                  class="btn btn-sm btn-outline-primary py-0 px-2"
+                  title="Sửa sinh viên"
+                  @click="batDauSua(index)"
+                >
+                  Sửa
+                </button>
+                <button
+                  type="button"
+                  class="btn btn-sm btn-outline-danger py-0 px-2"
+                  title="Xóa sinh viên"
+                  @click="xoaSinhVien(index)"
+                >
+                  Xóa
+                </button>
+              </div>
             </li>
           </ul>
 
@@ -117,7 +116,7 @@
 </template>
 
 <script>
-import { dbState, addStudent, deleteStudent, resetToDefault } from '../utils/dbService';
+import { dbState, addStudent, updateStudent, deleteStudent } from '../utils/dbService';
 
 export default {
   name: 'QuanLySinhVien',
@@ -126,63 +125,110 @@ export default {
       // Dữ liệu form nhập liệu với v-model
       tenSinhVien: '',
       tuoi: '',
+      editingIndex: -1,
       errorMessage: '',
       successMessage: '',
       db: dbState
     };
   },
   methods: {
+    // Điều phối Thêm mới hoặc Cập nhật sinh viên
+    async xuLyLuu() {
+      if (this.editingIndex !== -1) {
+        await this.capNhatSinhVien();
+      } else {
+        await this.themSinhVien();
+      }
+    },
+
     // Bài 2: Viết code xử lý thêm sinh viên và lưu vào db.json
     async themSinhVien() {
       this.errorMessage = '';
       this.successMessage = '';
 
-      // Kiểm tra tên không để trống
       if (!this.tenSinhVien.trim()) {
         this.errorMessage = 'Vui lòng nhập tên sinh viên!';
         return;
       }
 
-      // Kiểm tra tuổi hợp lệ
       const ageNum = parseInt(this.tuoi, 10);
       if (!this.tuoi || isNaN(ageNum) || ageNum <= 0) {
         this.errorMessage = 'Vui lòng nhập tuổi là số nguyên dương hợp lệ!';
         return;
       }
 
-      // Thêm sinh viên mới vào cơ sở dữ liệu JSON
       await addStudent({
         ten: this.tenSinhVien.trim(),
         tuoi: ageNum
       });
 
-      this.successMessage = `Đã thêm "${this.tenSinhVien.trim()}" và lưu vào db.json thành công!`;
-
-      // Xóa trắng form sau khi thêm
+      this.successMessage = `Đã thêm "${this.tenSinhVien.trim()}" thành công!`;
       this.tenSinhVien = '';
       this.tuoi = '';
 
-      // Tự động tắt thông báo sau 3 giây
       setTimeout(() => {
         this.successMessage = '';
       }, 3000);
     },
 
+    // Bắt đầu chỉnh sửa sinh viên
+    batDauSua(index) {
+      this.editingIndex = index;
+      const sv = this.db.students[index];
+      this.tenSinhVien = sv.ten;
+      this.tuoi = sv.tuoi;
+      this.errorMessage = '';
+      this.successMessage = '';
+    },
+
+    // Cập nhật thông tin sinh viên đang sửa
+    async capNhatSinhVien() {
+      this.errorMessage = '';
+      this.successMessage = '';
+
+      if (!this.tenSinhVien.trim()) {
+        this.errorMessage = 'Vui lòng nhập tên sinh viên!';
+        return;
+      }
+
+      const ageNum = parseInt(this.tuoi, 10);
+      if (!this.tuoi || isNaN(ageNum) || ageNum <= 0) {
+        this.errorMessage = 'Vui lòng nhập tuổi là số nguyên dương hợp lệ!';
+        return;
+      }
+
+      await updateStudent(this.editingIndex, {
+        ten: this.tenSinhVien.trim(),
+        tuoi: ageNum
+      });
+
+      this.successMessage = `Đã cập nhật sinh viên "${this.tenSinhVien.trim()}" thành công!`;
+      this.huySua();
+
+      setTimeout(() => {
+        this.successMessage = '';
+      }, 3000);
+    },
+
+    // Hủy thao tác sửa
+    huySua() {
+      this.editingIndex = -1;
+      this.tenSinhVien = '';
+      this.tuoi = '';
+      this.errorMessage = '';
+    },
+
     // Hàm xóa sinh viên và cập nhật lại db.json
     async xoaSinhVien(index) {
       const studentName = this.db.students[index]?.ten;
-      await deleteStudent(index);
-      this.successMessage = `Đã xóa sinh viên "${studentName}" khỏi db.json.`;
-      setTimeout(() => {
-        this.successMessage = '';
-      }, 2500);
-    },
-
-    // Khôi phục danh sách sinh viên ban đầu
-    async handleReset() {
-      if (confirm('Khôi phục danh sách tài khoản và sinh viên về mặc định ban đầu của đề bài?')) {
-        await resetToDefault();
-        this.successMessage = 'Đã khôi phục dữ liệu gốc từ đề bài!';
+      if (confirm(`Bạn có chắc chắn muốn xóa sinh viên "${studentName}"?`)) {
+        await deleteStudent(index);
+        if (this.editingIndex === index) {
+          this.huySua();
+        } else if (this.editingIndex > index) {
+          this.editingIndex--;
+        }
+        this.successMessage = `Đã xóa sinh viên "${studentName}".`;
         setTimeout(() => {
           this.successMessage = '';
         }, 2500);

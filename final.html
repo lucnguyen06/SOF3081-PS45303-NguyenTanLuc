@@ -188,12 +188,7 @@
           password: '',
           errorMessage: '',
           successMessage: '',
-          auth: authState,
-          db: dbState,
-          showRegister: false,
-          newUsername: '',
-          newPassword: '',
-          newFullName: ''
+          auth: authState
         };
       },
       computed: {
@@ -217,30 +212,6 @@
           } else {
             this.errorMessage = res.message;
           }
-        },
-        handleRegister() {
-          if (!this.newUsername.trim() || !this.newPassword.trim()) {
-            this.errorMessage = 'Vui lòng nhập tên đăng nhập và mật khẩu!';
-            return;
-          }
-          const res = authRegister(this.newUsername, this.newPassword, this.newFullName);
-          if (res.success) {
-            this.successMessage = `Đã tạo tài khoản "${this.newUsername}" và lưu vào JSON!`;
-            this.username = this.newUsername;
-            this.password = this.newPassword;
-            this.newUsername = '';
-            this.newPassword = '';
-            this.newFullName = '';
-            this.showRegister = false;
-            this.errorMessage = '';
-          } else {
-            this.errorMessage = res.message;
-          }
-        },
-        fillAccount(u, p) {
-          this.username = u;
-          this.password = p;
-          this.errorMessage = '';
         },
         handleLogout() {
           authLogout();
@@ -286,7 +257,7 @@
                   <label class="form-label fw-semibold">Username</label>
                   <input
                     type="text"
-                    class="form-control"
+                    class="control form-control"
                     v-model="username"
                     placeholder="Nhap username"
                   />
@@ -302,54 +273,12 @@
                   />
                 </div>
 
-                <div class="d-grid mb-3">
+                <div class="d-grid">
                   <button type="submit" class="btn btn-success fw-semibold py-2">
                     Login
                   </button>
                 </div>
               </form>
-
-              <div class="border-top pt-3 mt-3">
-                <div class="d-flex justify-content-between align-items-center mb-2">
-                  <span class="small text-muted fw-bold">📁 Dữ liệu tài khoản (db.json):</span>
-                  <button 
-                    type="button" 
-                    class="btn btn-link btn-sm p-0 text-decoration-none"
-                    @click="showRegister = !showRegister"
-                  >
-                    {{ showRegister ? 'Đóng' : '+ Thêm tài khoản' }}
-                  </button>
-                </div>
-
-                <div v-if="showRegister" class="p-2 mb-3 bg-light rounded border small">
-                  <div class="mb-2">
-                    <input type="text" class="form-control form-control-sm" v-model="newUsername" placeholder="Tên đăng nhập mới" />
-                  </div>
-                  <div class="mb-2">
-                    <input type="password" class="form-control form-control-sm" v-model="newPassword" placeholder="Mật khẩu" />
-                  </div>
-                  <div class="mb-2">
-                    <input type="text" class="form-control form-control-sm" v-model="newFullName" placeholder="Họ và tên hiển thị" />
-                  </div>
-                  <button type="button" class="btn btn-sm btn-primary w-100" @click="handleRegister">Lưu tài khoản</button>
-                </div>
-
-                <div class="small text-muted">
-                  <div class="fw-semibold mb-1">Tài khoản mẫu:</div>
-                  <div class="d-flex flex-wrap gap-1">
-                    <button
-                      v-for="acc in db.accounts"
-                      :key="acc.id"
-                      type="button"
-                      class="btn btn-sm btn-outline-secondary py-0 px-2"
-                      style="font-size: 0.78rem;"
-                      @click="fillAccount(acc.username, acc.password)"
-                    >
-                      {{ acc.username }} / {{ acc.password }}
-                    </button>
-                  </div>
-                </div>
-              </div>
             </div>
           </div>
         </div>
@@ -363,12 +292,20 @@
         return {
           tenSinhVien: '',
           tuoi: '',
+          editingIndex: -1,
           errorMessage: '',
           successMessage: '',
           db: dbState
         };
       },
       methods: {
+        xuLyLuu() {
+          if (this.editingIndex !== -1) {
+            this.capNhatSinhVien();
+          } else {
+            this.themSinhVien();
+          }
+        },
         themSinhVien() {
           this.errorMessage = '';
           this.successMessage = '';
@@ -399,38 +336,79 @@
             this.successMessage = '';
           }, 3000);
         },
-        xoaSinhVien(index) {
-          const removed = this.db.students.splice(index, 1);
+        batDauSua(index) {
+          this.editingIndex = index;
+          const sv = this.db.students[index];
+          this.tenSinhVien = sv.ten;
+          this.tuoi = sv.tuoi;
+          this.errorMessage = '';
+          this.successMessage = '';
+        },
+        capNhatSinhVien() {
+          this.errorMessage = '';
+          this.successMessage = '';
+
+          if (!this.tenSinhVien.trim()) {
+            this.errorMessage = 'Vui lòng nhập tên sinh viên!';
+            return;
+          }
+
+          const ageNum = parseInt(this.tuoi, 10);
+          if (!this.tuoi || isNaN(ageNum) || ageNum <= 0) {
+            this.errorMessage = 'Vui lòng nhập tuổi là số nguyên dương hợp lệ!';
+            return;
+          }
+
+          this.db.students[this.editingIndex] = {
+            ...this.db.students[this.editingIndex],
+            ten: this.tenSinhVien.trim(),
+            tuoi: ageNum
+          };
           saveDb();
-          this.successMessage = `Đã xóa sinh viên "${removed[0].ten}".`;
+
+          this.successMessage = `Đã cập nhật sinh viên "${this.tenSinhVien.trim()}" thành công!`;
+          this.huySua();
+
           setTimeout(() => {
             this.successMessage = '';
-          }, 2500);
+          }, 3000);
         },
-        resetData() {
-          if (confirm('Khôi phục danh sách về mặc định ban đầu?')) {
-            this.db.students = JSON.parse(JSON.stringify(initialDb.students));
+        huySua() {
+          this.editingIndex = -1;
+          this.tenSinhVien = '';
+          this.tuoi = '';
+          this.errorMessage = '';
+        },
+        xoaSinhVien(index) {
+          const studentName = this.db.students[index]?.ten;
+          if (confirm(`Bạn có chắc chắn muốn xóa sinh viên "${studentName}"?`)) {
+            this.db.students.splice(index, 1);
             saveDb();
+            if (this.editingIndex === index) {
+              this.huySua();
+            } else if (this.editingIndex > index) {
+              this.editingIndex--;
+            }
+            this.successMessage = `Đã xóa sinh viên "${studentName}".`;
+            setTimeout(() => {
+              this.successMessage = '';
+            }, 2500);
           }
         }
       },
       template: `
         <div class="qlsv-container py-3">
-          <h2 class="text-center fw-bold mb-3">Quan ly Sinh vien</h2>
-
-          <div class="d-flex justify-content-center align-items-center gap-2 mb-4">
-            <span class="badge bg-light text-dark border">📁 Nguồn dữ liệu: JSON</span>
-            <span class="badge bg-success-subtle text-success border border-success-subtle">● Tự động lưu</span>
-            <button type="button" class="btn btn-sm btn-outline-secondary py-0 px-2" style="font-size: 0.8rem;" @click="resetData">↺ Khôi phục gốc</button>
-          </div>
+          <h2 class="text-center fw-bold mb-4">Quan ly Sinh vien</h2>
 
           <div class="row justify-content-center g-4">
-            <!-- Cột Trái: Thêm sinh viên -->
+            <!-- Cột Trái: Thêm / Sửa sinh viên -->
             <div class="col-md-5 col-lg-4">
               <div class="card border-0 shadow-sm p-3">
-                <h4 class="fw-bold mb-3 text-primary text-center">Them sinh vien</h4>
+                <h4 class="fw-bold mb-3 text-primary text-center">
+                  {{ editingIndex !== -1 ? 'Sửa sinh viên' : 'Them sinh vien' }}
+                </h4>
 
-                <form @submit.prevent="themSinhVien">
+                <form @submit.prevent="xuLyLuu">
                   <div class="mb-3">
                     <label class="form-label fw-semibold">Ten sinh vien</label>
                     <input
@@ -458,6 +436,75 @@
                   </div>
 
                   <div v-if="successMessage" class="alert alert-success py-2 px-3 small mb-3">
+                    {{ successMessage }}
+                  </div>
+
+                  <div v-if="editingIndex === -1" class="d-grid">
+                    <button type="submit" class="btn btn-warning fw-semibold text-dark py-2">
+                      Them sinh vien
+                    </button>
+                  </div>
+                  <div v-else class="d-flex gap-2">
+                    <button type="submit" class="btn btn-primary fw-semibold py-2 flex-grow-1">
+                      Cập nhật sinh viên
+                    </button>
+                    <button type="button" class="btn btn-secondary fw-semibold py-2" @click="huySua">
+                      Hủy
+                    </button>
+                  </div>
+                </form>
+              </div>
+            </div>
+
+            <!-- Cột Phải: Danh sách sinh viên -->
+            <div class="col-md-6 col-lg-5">
+              <div class="card border-0 shadow-sm p-3">
+                <h4 class="fw-bold mb-3 text-danger text-center">Danh sach sinh vien</h4>
+
+                <ul class="list-group list-group-flush">
+                  <li
+                    v-for="(sv, index) in db.students"
+                    :key="sv.id || index"
+                    class="list-group-item d-flex justify-content-between align-items-center py-2 px-2"
+                    :class="{ 'bg-warning-subtle': editingIndex === index }"
+                  >
+                    <span class="fs-6">
+                      {{ sv.ten }} - {{ sv.tuoi }} tuoi
+                    </span>
+                    <div class="d-flex gap-1">
+                      <button
+                        type="button"
+                        class="btn btn-sm btn-outline-primary py-0 px-2"
+                        title="Sửa sinh viên"
+                        @click="batDauSua(index)"
+                      >
+                        Sửa
+                      </button>
+                      <button
+                        type="button"
+                        class="btn btn-sm btn-outline-danger py-0 px-2"
+                        title="Xóa sinh viên"
+                        @click="xoaSinhVien(index)"
+                      >
+                        Xóa
+                      </button>
+                    </div>
+                  </li>
+                </ul>
+
+                <div v-if="db.students.length === 0" class="text-center text-muted py-3">
+                  Hiện chưa có sinh viên nào trong danh sách.
+                </div>
+
+                <div class="mt-3 text-end text-muted small">
+                  Tổng số sinh viên: <strong>{{ db.students.length }}</strong>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      `
+    };
                     {{ successMessage }}
                   </div>
 
